@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+#execut {
+    position: absolute;
+    left: 33%;
+    top: 90px;
+}
+
+#scoretext {
+    position: absolute;
+    top: 60px;
+}
+
+#executeLine {
+    padding-top: 8px;
+    border-bottom: solid;
+    font-size: 15px;
+    vertical-align: inherit;
+}
+
+td {
+  padding-top: 5px;
+    border-bottom: solid;
+    font-size: 15px;
+    min-height: 30px;
+}
+
+
+</style>
+<body>
+<div id="blockPASTEtbody" style="margin-left: 30%;">
+    <textarea id="tBodypasted" placeholder="Вставьте tbody из 24score.pro" style="max-width: 100px;"></textarea>
+    <button onclick="addTBODY();">Вставить элемент</button>
+    <p></p>
+</div>
+    <button onclick="loadScore(1);">Подсчитать из таблицы</button>
+    <button onclick="loadScore(2);">Распредилить на Чет неЧет</button>
+    <button onclick="loadScore(3);">Проверить четность - была ли она вообще</button>
+    <button onclick="loadScore(4);">Сколько денег ПЛЮС если все время ставили бы на ЧЕТ</button>
+    <button onclick="loadScore(5);">ЧЕТ на первые 3 четверти</button>
+    <button onclick="loadScore(6);">ЧЕТ на первые 2 четверти</button>
+    <button onclick="loadScore(7);">3 такта на НЕЧЕТ</button>
+     <p></p>
+    <textarea id="summSVAKI">100</textarea>
+    <textarea id="ITOG" placeholder="Итог"></textarea>
+<div id="execut"></div>
+      </body>
+            
+
+
+<script>
+const tableTXT =['<table class="t1 matches">', '</table>']
+var all_TXT = '';
+var tBodyfromTXT = '';
+
+function addALLscore(){
+var elemDiv = document.createElement('div');
+elemDiv.innerHTML = all_TXT;
+elemDiv.id = 'scoretext';
+document.body.appendChild(elemDiv);}
+      
+      function deletHref(){
+        var all_links = document.querySelectorAll("td.score > a");
+      console.log(all_links);
+for(var i=0; i<all_links.length; i++){
+    all_links[i].removeAttribute("href");
+}
+      }
+
+      function addtext(txt){
+        var elemDiv = document.createElement('div');
+elemDiv.innerHTML = txt;
+elemDiv.id = 'executeLine';
+let blockExecut = document.getElementById('execut')
+blockExecut.appendChild(elemDiv);
+      }
+
+   function clearTXTexe(){
+        let blockExecut = document.getElementById('execut')
+        blockExecut.innerHTML = '';
+      }
+      
+      let exe='';
+
+      function even(number){
+        return number % 2 === 0 ? "чет" : "нечет"
+}
+
+///////////////////////////////////////////////////////////////////////////
+//
+function matchINCHET(txt){
+        var exeLine='';
+         //txt.length меняем на 4 такта
+        for(var i=0; i<4; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       // console.log('первый '+oneScore);
+       // console.log('второй '+twoScore);
+       exe = Number(oneScore) + Number(twoScore);
+      // console.log('итог '+exe);
+       exeLine = exeLine + ' ' + even(exe);
+        }   
+    //    console.log(exeLine)
+        addtext(''+exeLine);
+      }
+
+      function  whereCHET(txt){
+        var exeLine='';
+        //txt.length меняем на 4 такта
+        for(var i=0; i<4; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'чет'){
+       exeLine = ' ' + even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+         addtext('НЕТ ЧЕТОВ');
+}
+    else {
+        addtext(''+exeLine);
+
+         }
+      }
+
+      let ALLsumm=0;
+
+      function  whereCHETwithMoney(txt){
+        var exeLine='';
+        //txt.length меняем на 4 такта
+        for(var i=0; i<4; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'чет'){
+       exeLine = exeLine + ' ' + even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+        var summ = document.getElementById('summSVAKI').value;
+        var minus = (summ*-15);
+         addtext(minus);
+         ALLsumm = ALLsumm + Number(minus);
+}
+    else {
+      var summ = document.getElementById('summSVAKI').value;
+        var pluss = (Number(summ)*0.9)
+        addtext(pluss);
+        ALLsumm = Number(ALLsumm) + pluss;
+         }
+         
+       var itog = document.getElementById('ITOG');
+       itog.value = ALLsumm;
+      }
+
+      function  only3NECHET(txt){
+        var exeLine='';
+        //txt.length меняем на 3 такта
+        for(var i=0; i<3; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'нечет'){
+       exeLine = even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+        var summ = document.getElementById('summSVAKI').value;
+        var minus = (summ*-6);
+         addtext(minus);
+         ALLsumm = ALLsumm + Number(minus);
+}
+    else {
+        var summ = document.getElementById('summSVAKI').value;
+        var pluss = (Number(summ)*0.9)
+        addtext(pluss);
+        ALLsumm = Number(ALLsumm) + pluss;
+         }
+         
+       var itog = document.getElementById('ITOG');
+       itog.value = ALLsumm;
+      }
+
+      function  only3(txt){
+        var exeLine='';
+        //txt.length меняем на 3 такта
+        for(var i=0; i<3; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'чет'){
+       exeLine = exeLine + ' ' + even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+        var summ = document.getElementById('summSVAKI').value;
+        var minus = (summ*-6);
+         addtext(minus);
+         ALLsumm = ALLsumm + Number(minus);
+}
+    else {
+        var summ = document.getElementById('summSVAKI').value;
+        var pluss = (Number(summ)*0.9)
+        addtext(pluss);
+        ALLsumm = Number(ALLsumm) + pluss;
+         }
+         
+       var itog = document.getElementById('ITOG');
+       itog.value = ALLsumm;
+      }
+
+      function  only2(txt){
+        var exeLine='';
+        //txt.length меняем на 3 такта
+        for(var i=0; i<2; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'чет'){
+       exeLine = exeLine + ' ' + even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+        var summ = document.getElementById('summSVAKI').value;
+        var minus = (summ*-3);
+         addtext(minus);
+         ALLsumm = ALLsumm + Number(minus);
+}
+    else {
+      var summ = document.getElementById('summSVAKI').value;
+        var pluss = (Number(summ)*0.9)
+        addtext(pluss);
+        ALLsumm = Number(ALLsumm) + pluss;
+         }
+         
+       var itog = document.getElementById('ITOG');
+       itog.value = ALLsumm;
+      }
+
+      function  only1(txt){
+        var exeLine='';
+        //txt.length меняем на 3 такта
+        for(var i=0; i<1; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       exe = Number(oneScore) + Number(twoScore);
+       if(even(exe) === 'чет'){
+       exeLine = exeLine + ' ' + even(exe);
+       }
+         }   
+    //    console.log(exeLine)
+    if(exeLine === ''){
+        var summ = document.getElementById('summSVAKI').value;
+        var minus = (summ*-1);
+         addtext(minus);
+         ALLsumm = ALLsumm + Number(minus);
+}
+    else {
+      var summ = document.getElementById('summSVAKI').value;
+        var pluss = (Number(summ)*0.9)
+        addtext(pluss);
+        ALLsumm = Number(ALLsumm) + pluss;
+         }
+         
+       var itog = document.getElementById('ITOG');
+       itog.value = ALLsumm;
+      }
+
+
+
+      function match(txt){
+        var exeLine='';
+         //txt.length меняем на 4 такта
+        for(var i=0; i<4; i++){
+        var chet = txt[i].split(':');
+        let oneScore = chet[0];
+        let twoScore = chet[1];
+       // console.log('первый '+oneScore);
+       // console.log('второй '+twoScore);
+       exe = Number(oneScore) + Number(twoScore);
+      // console.log('итог '+exe);
+       exeLine = exeLine + ' ' + exe;
+        }   
+    //    console.log(exeLine)
+        addtext(''+exeLine);
+      }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+      function loadScore(txt){
+           ALLsumm = 0; 
+        clearTXTexe();
+          var all_score = document.querySelectorAll(".sets");  
+          //all_score.length
+      //    alert(txt);
+for(var i=0; i<all_score.length; i++){
+            var line = all_score[i].textContent;
+            var score = line.split(','); 
+           
+            if(txt === 1){
+        match(score);}
+        else if(txt === 2){
+            matchINCHET(score);
+        }
+        else if(txt === 3){
+            whereCHET(score);
+        }
+        else if(txt === 4){
+     
+            whereCHETwithMoney(score);
+        }
+ else if(txt === 5){
+     
+            only3(score);
+        }
+        else if(txt === 6){
+     
+     only2(score);
+ } else if(txt === 7){
+  only3NECHET(score);
+ }
+
+ ////////////////
+        }
+        
+          //    console.log('счета - '+score)        
+
+      }
+
+
+    /////////////////////////////////////////////////////////////////////////
+      window.onload = function() {
+   //   deletHref();
+   // loadScore();
+//    addtext('Execut block');
+   
+      };
+
+function addTBODY(){
+    var blockPAST = document.getElementById('blockPASTEtbody');
+    blockPAST.style.display = 'none';
+    var txtTBODYfromtxtarea = document.getElementById('tBodypasted');
+    tBodyfromTXT = txtTBODYfromtxtarea.value;
+    all_TXT = tableTXT[0] + tBodyfromTXT + tableTXT[1];
+    addALLscore();
+}
+
+
+
+
+</script>  
+  </html>
